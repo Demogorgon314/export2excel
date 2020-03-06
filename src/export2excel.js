@@ -1,20 +1,31 @@
 /* eslint-disable */
-import { saveAs } from 'file-saver'
+import {saveAs} from 'file-saver'
 import XLSX from 'xlsx'
 
-;(function(w){
+    ;
+
+(function (w) {
 
 
-    function Export2Excel(selector, context){
+    function Export2Excel(selector, context) {
         return new Export2Excel.fn.init(selector, context);
     }
 
     Export2Excel.fn = Export2Excel.prototype = {
-        export_table_to_excel:export_table_to_excel,
-        export_json_to_excel: export_json_to_excel
+        export_table_to_excel: export_table_to_excel,
+        export_json_to_excel: export_json_to_excel,
+        formatJson: function(filterVal, jsonData, roles) {
+            return jsonData.map(v => filterVal.map(j => {
+                const fn = roles[j];
+                if(fn !== undefined && fn !== null){
+                    return fn(v[j]);
+                }
+                return v[j];
+            }))
+        }
     };
 
-    var init = Export2Excel.fn.init = function(selector, context){
+    var init = Export2Excel.fn.init = function (selector, context) {
 
     };
     init.prototype = Export2Excel.fn;
@@ -57,7 +68,8 @@ import XLSX from 'xlsx'
                             c: outRow.length + colspan - 1
                         }
                     });
-                };
+                }
+                ;
 
                 //Handle Value
                 outRow.push(cellValue !== "" ? cellValue : null);
@@ -176,8 +188,6 @@ import XLSX from 'xlsx'
         filename = filename || 'excel-list'
         data = [...data]
         data.unshift(header);
-        debugger
-
         for (let i = multiHeader.length - 1; i > -1; i--) {
             data.unshift(multiHeader[i])
         }
